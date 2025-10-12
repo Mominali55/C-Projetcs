@@ -1,0 +1,59 @@
+char *argv[] (An array of character pointers)
+
+char **argv (A pointer to a character pointer)
+
+In the context of a function argument, these two forms are treated by the C compiler as functionally identical.
+The reason for this has to do with how C handles arrays when they are passed to functions.
+
+## The Memory Model: Pointer to a Pointer
+Let's visualize what argv actually represents in memory. When you run a program from your terminal like this:
+
+./my_shell ls -l
+
+The operating system sets up the arguments in memory before your main function is ever called. Here’s what it looks like:
+
+The Actual Strings: Somewhere in memory, the individual command-line arguments are stored as null-terminated strings.
+
+"my_shell"
+
+"ls"
+
+"-l"
+
+The List of Pointers (The "Vector"): Elsewhere in memory, the OS creates an array of char * pointers.
+Each element of this array stores the memory address of the beginning of one of those strings.
+
+argv[0] points to the memory address of "my_shell"
+
+argv[1] points to the memory address of "ls"
+
+argv[2] points to the memory address of "-l"
+
+A final NULL pointer is added to the end to mark the end of the argument list.
+
+The argv Variable Itself: The argv variable in your main function is a single pointer that stores the memory address of the very beginning of that list of pointers.
+
+This is why it's a char **.
+
+A char * is a pointer to a character (which we use to represent a string).
+
+A char ** is a pointer to a char * (a pointer to a string).
+
+So, argv is a pointer that points to the first element of an array, where each element is also a pointer.
+
+## Array [] vs. Pointer * in Function Arguments
+This is the final piece of the puzzle. In C, when you pass an array to a function, what you are actually passing is a pointer to the first element of that array. This is a concept known as "array decay".
+
+Because of this rule:
+
+When the compiler sees char *argv[] as a function parameter, it understands it as "a pointer to the first element of an array of char *".
+This simplifies to "a pointer to a char *", which is char **.
+
+When the compiler sees char **argv, it understands it directly as "a pointer to a char *".
+
+So, inside the main function, there is no difference. Both notations allow you to access the arguments using array syntax like argv[0], argv[1], etc.
+
+Summary:
+You can use either char *argv[] or char **argv. The ** notation is often preferred by experienced C programmers because it more accurately describes 
+what is happening at the memory level: you are receiving a single pointer that points to a block of other pointers.
+The CS50 version with string argv[] is a helpful simplification to make learning easier, but now you understand the powerful C concepts working underneath.
