@@ -57,3 +57,68 @@ Summary:
 You can use either char *argv[] or char **argv. The ** notation is often preferred by experienced C programmers because it more accurately describes 
 what is happening at the memory level: you are receiving a single pointer that points to a block of other pointers.
 The CS50 version with string argv[] is a helpful simplification to make learning easier, but now you understand the powerful C concepts working underneath.
+
+--
+
+EXIT_SUCCESS is not a C keyword (like int or for), but a macro. A macro is essentially a pre-defined constant that the compiler replaces with its actual value before compiling the code.
+
+## What It Does: Signaling Success to the Operating System
+In simple terms:
+
+return EXIT_SUCCESS; is the standard and most portable way for your main function to tell the operating system (like Linux, Windows, or macOS) that the program finished its job without any errors.
+
+When any program in an operating system finishes, it gives back a number called an exit status code. This code is a signal to whatever process launched your program (like the terminal or a script).
+
+A status code of 0 is the universal convention for SUCCESS.
+
+Any non-zero status code (like 1, 2, -1, etc.) conventionally means there was some kind of FAILURE or error.
+
+### EXIT_SUCCESS vs. return 0;
+You might see return 0; used in many places, and on 99.9% of modern systems (including Windows, macOS, and Linux), it does the exact same thing. So why use the macro?
+
+Readability: return EXIT_SUCCESS; is more descriptive. Anyone reading your code immediately understands that this is the successful exit point of the program. It's self-documenting.
+
+Portability: The C standard guarantees that EXIT_SUCCESS will be the correct value for a successful termination on any system that follows the standard. While 0 is almost always the value, using the macro is the technically correct and 100% portable way to write your code. It's considered best practice.
+
+### The Counterpart: EXIT_FAILURE
+As you might guess, there is a corresponding macro for failure:
+
+EXIT_FAILURE: This macro is used to signal that the program terminated because of an error. It's guaranteed to be a non-zero value (usually 1).
+
+You saw this in the lsh_read_line function. If malloc fails, the program can't continue, so it exits with a failure status:
+
+-------------
+C
+
+if (!buffer) {
+  fprintf(stderr, "lsh: allocation error\n");
+  exit(EXIT_FAILURE); // Note: exit() is a function that also uses these codes.
+}
+-------------
+### Where Do They Come From?
+Both EXIT_SUCCESS and EXIT_FAILURE are defined in the standard library header file, <stdlib.h>. This is why we included it at the top of our file.
+
+### Practical Example: Who Uses This Exit Code?
+This is critically important for scripting. Imagine you have a shell script that compiles and then runs your program. You'd want the script to stop if the compilation fails.
+
+Here’s a simple Linux/macOS shell script example:
+-------------
+Bash
+
+#!/bin/bash
+
+echo "Compiling the shell..."
+gcc main.c -o my_shell
+
+# The '$?' variable holds the exit code of the last command
+if [ $? -eq 0 ]; then
+  echo "Compilation successful. (gcc returned EXIT_SUCCESS)"
+  # Now you can run the program
+  ./my_shell
+else
+  echo "Compilation failed! (gcc returned EXIT_FAILURE)"
+fi
+-------------
+
+
+The script checks the exit code from the gcc compiler to decide what to do next. Your shell will provide the same capability to other scripts and tools
