@@ -122,3 +122,88 @@ fi
 
 
 The script checks the exit code from the gcc compiler to decide what to do next. Your shell will provide the same capability to other scripts and tools
+
+Day [2]
+
+## 1. char *line; (Why a pointer?)
+You're asking why line is a pointer (char *) instead of a simple array (like char line[1024];).
+
+The simple answer is: we don't know how long the user's command will be.
+
+A user could type a short command like ls or a very long one. By declaring char *line;, we create a pointer that can hold the memory address of any string, regardless of its size.
+
+The function lsh_read_line() is designed to:
+
+Dynamically allocate just the right amount of memory on the heap using malloc and realloc.
+
+Return the memory address where the user's input string is stored.
+
+So, line isn't the string itself; it's a variable that points to the string that lsh_read_line() created for us. This is a flexible and efficient way to handle input of unknown size.
+
+## 2. char **args; (Accessing characters or strings?)
+This is a great observation. char **args; is not for accessing each character. Instead, it's for holding an array of strings.
+
+Let's break it down again:
+
+char *: A pointer to a character (a string).
+
+char **: A pointer to a char * (a pointer to a string).
+
+The function lsh_split_line() takes the single string from line (e.g., "ls -l /home") and breaks it into pieces. It then creates an array in memory where each element points to one of those pieces.
+
+args points to the beginning of this array.
+
+So:
+
+args points to the start of the array ["ls", "-l", "/home", NULL].
+
+args[0] points to the string "ls".
+
+args[1] points to the string "-l".
+
+args[2] points to the string "/home".
+
+It's a "pointer to a pointer" because it points to an array where each element is also a pointer (to a string).
+
+## 3. int status; (Why bother with status?)
+The int status; variable is the control mechanism for the shell's main loop.
+
+Look at the last line: } while (status);. This means "keep looping as long as the status variable is not zero."
+
+The function lsh_execute(args) will be responsible for running the command. It will also be responsible for deciding if the shell should continue running. It will return:
+
+1 (or any non-zero value) if the shell should continue.
+
+0 if the shell should terminate.
+
+For example, when we implement a built-in exit command, the lsh_execute function will see the command is "exit" and will return 0;. This will cause the status variable to become 0, the while (status) condition will become false, and the loop will end, gracefully shutting down your shell.
+
+## 4. *line vs. line = lsh_...();
+These are related but used for completely different things.
+
+line: This is the pointer variable itself. Think of it as a box that holds a memory address. When we write line = lsh_read_line();, we are assigning a value (the memory address returned by the function) to this variable. We are filling the box.
+
+*line: The asterisk * here is the dereference operator. It means "go to the address stored in line and get the value that is there." Since line points to a string, *line would give you the very first character of that string.
+
+In this specific code, we don't actually use *line. We pass the pointer line itself to lsh_split_line() because that function needs to know the address of the whole string to work with it.
+
+## 5. Arguments, free(), and Timing
+Why pass arguments so early?
+This is the logical flow of a shell. It's a simple, repeating sequence:
+
+Read: Get a complete line of input from the user (lsh_read_line).
+
+Parse: Break that line into a command and its arguments (lsh_split_line).
+
+Execute: Run the parsed command (lsh_execute).
+The loop performs these three steps in order, over and over. We parse the line into args right after we read it because we need the args to perform the execution step.
+
+Why did we free() the memory?
+This is one of the most important concepts in C. The functions lsh_read_line() and lsh_split_line() requested memory from the operating system on the heap using malloc. The OS gives you this memory, but it's your job to give it back when you're done.
+
+free(line);: Gives back the memory that was allocated for the complete input string.
+
+free(args);: Gives back the memory that was allocated for the array of pointers.
+
+If you don't free the memory, your shell will have a memory leak. With every command the user types, your program will consume more and more memory without ever releasing it, eventually causing it to slow down or crash.
+We free the memory at the end of the loop because at that point, we are finished with the current command and are about to read the next one.
