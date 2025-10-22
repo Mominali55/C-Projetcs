@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Diwali Fireworks — Interactive Animation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <div id="ui">
+    <div class="controls">
+      <label>Pattern
+        <select id="pattern">
+          <option value="peony">Peony</option>
+          <option value="willow">Willow</option>
+          <option value="crackle">Crackle</option>
+        </select>
+      </label>
+
+      <label>Particles
+        <input id="particleCount" type="range" min="20" max="200" value="80">
+      </label>
+
+      <label>Gravity
+        <input id="gravity" type="range" min="0" max="1" step="0.01" value="0.08">
+      </label>
+
+      <button id="launchRandom">Launch Random</button>
+    </div>
+
+    <div id="credits">Click or tap to launch fireworks — inspired by Diwali 🎆</div>
+  </div>
+
+  <script src="fireworks.js" defer></script>
+</body>
+</html>

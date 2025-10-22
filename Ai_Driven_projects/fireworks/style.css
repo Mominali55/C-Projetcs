@@ -1,0 +1,18 @@
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:radial-gradient(circle at 20% 10%, #07112a 0%, #000011 60%), #000011;overflow:hidden;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+#canvas{display:block;position:fixed;inset:0}
+#ui{position:fixed;left:12px;top:12px;color:#fff;pointer-events:none}
+.controls{background:rgba(0,0,0,0.25);backdrop-filter:blur(6px);padding:10px;border-radius:10px;display:flex;gap:10px;flex-wrap:wrap;pointer-events:auto}
+.controls label{font-size:13px;color:#ffd;display:flex;align-items:center;gap:6px}
+.controls select,input[type=range]{appearance:none;background:transparent;color:#fff}
+#credits{margin-top:8px;color:#ccc;font-size:12px}
+
+/* bright spark look */
+.spark{filter:blur(0.6px)}
+
+button{background:linear-gradient(180deg,#ff7a18,#ff4e00);border:none;color:#200;padding:6px 10px;border-radius:8px;font-weight:600;cursor:pointer}
+button:active{transform:translateY(1px)}
+
+@media (max-width:520px){.controls{transform:scale(0.9);transform-origin:left top}}
+
