@@ -1,6 +1,9 @@
 //Creating a Shell in C
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
+#include<sys/types.h> //For pid_t
+#include<sys/wait.h> //For waitpid()
 
 
 int main(int argc,char **argv)
@@ -111,4 +114,27 @@ char **lsh_split_line(char *line)
     }
     tokens[position]=NULL;
     return tokens;   
+}
+
+int lsh_launch(char **args)
+{
+    pid_t pid , wpid; //How is this valid...(Format)?-> this could be a struct datyatype ig
+    int status;
+
+    pid = fork(); //1.here as you can see it is being used "pid" 2.Remember Fork return a value 0,1,etc
+    if(pid == 0){
+        //child process
+        if (execvp(args[0],args) == -1){ //wht is thsi Function for?
+            perror("lsh");
+        }
+        exit(EXIT_FAILURE);
+    }else if (pid < 0){
+        //Error forking
+        perror("lsh");  //Another Fucntion NS
+    }else{
+        do{
+            wpid=waitpid(pid,&status,WUNTRACED);
+        }while (!WIFEXITED(status) && !WIFSIGNALED(status)); //wht i this
+    }
+    return 1;
 }
