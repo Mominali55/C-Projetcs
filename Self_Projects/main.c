@@ -75,3 +75,40 @@ char *lsh_read_line(void)
     }
     
 }
+
+#define LSH_TOK_BUFSIZE 64
+#define LSH_TOK_DELIM " \t\r\n\a"
+
+char **lsh_split_line(char *line)
+{
+    int bufsize =LSH_TOK_BUFSIZE,position=0; //How Two arg?
+    char **tokens =malloc(bufsize *sizeof(char*));
+    char *token;
+
+    if(tokens == NULL)
+    {
+        fprintf(stderr,"LSH:Allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    //strtok() actually does is return pointers to within the string you give it, and place \0 bytes at the end of each token
+    token = strtok(line,LSH_TOK_DELIM); //why use LSH...
+    while (token != NULL) 
+    {
+        tokens[position]=token;
+        position++;
+
+        if (position >= bufsize){
+            bufsize +=  LSH_TOK_BUFSIZE;
+            tokens = realloc(tokens,bufsize*sizeof(char*));
+            if(tokens ==NULL){
+                fprintf(stderr,"LSH:Allocation failed\n");
+                exit(EXIT_FAILURE);
+            }
+            
+        }  
+        token =strtok(NULL,LSH_TOK_DELIM);
+    }
+    tokens[position]=NULL;
+    return tokens;   
+}
