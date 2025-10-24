@@ -4,6 +4,17 @@
 #include<string.h>
 #include<sys/types.h> //For pid_t
 #include<sys/wait.h> //For waitpid()
+#include <unistd.h> // For fork(), execvp(), and chdir()
+
+void lsh_loop(void);
+char *lsh_read_line(void);
+char **lsh_split_line(char *line);
+int lsh_execute(char **args);
+int lsh_launch(char **args);
+int lsh_cd(char **args);
+int lsh_help(char **args);
+int lsh_exit(char **args);
+int lsh_num_builtins();
 
 
 int main(int argc,char **argv)
@@ -11,7 +22,7 @@ int main(int argc,char **argv)
     //Loading configuration files if any
 
     //Running command loop
-    ls_loop();
+    lsh_loop();
 
     //Performing any shutdown/cleanup
 
@@ -34,6 +45,8 @@ void lsh_loop(void)
         free(line);
         free(args);
     } while (status);
+    // Note: free(line) is safe because strtok modifies line but args[i] point into line
+    // This is acceptable - just be aware strtok destroys the original string
 }
 
 #define LSH_RL_BUFSIZE 1024
@@ -45,7 +58,7 @@ char *lsh_read_line(void)
     int c;
 
     //If the memory allocation fails
-    if(!buffer) // If buffer is NULL
+    if(buffer == NULL) // If buffer is NULL
     {
         //fprintf is used to print to a file stream, here stderr
         fprintf(stderr,"lsh: allocation error\n");
@@ -172,6 +185,7 @@ int lsh_num_builtins(){
 int lsh_cd(char **args){
     if (args[1] == NULL){
         fprintf(stderr,"lsh: expected argument to \"cd\"\n"); //why use \"cd\"?
+        return 1; // Continue execution even if cd fails
     }else{
         if(chdir(args[1]) != 0){
             perror("lsh"); //This function is used to print a descriptive error message to stderr
@@ -218,3 +232,7 @@ int lsh_execute(char **args)
         }
     return lsh_launch(args);
 }
+
+
+
+
