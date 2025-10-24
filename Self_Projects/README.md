@@ -20,18 +20,27 @@ Applying Everything i leanrn From Programming Languages.
 2.The Project was made with the Guide by "https://brennan.io/2015/01/16/write-a-shell-in-c/" Great thx to this dude
 --I have Modified this Code according to myself..
 
-3.Things that i ahve to learn i have leanred from thsi code are as Follows:-
+3.Things that i have leanred from this Project are as Follows:-
 --Some stamdard linrary like.
---#include<stdio.h>
---#include<stdlib.h>
---#include<string.h>
---#include<sys/types.h> 
---#include<sys/wait.h> 
---#include <unistd.h> 
+--#include<stdio.h>.
+--#include<stdlib.h>.
+--#include<string.h>.
+--#include<sys/types.h>. 
+--#include<sys/wait.h>.
+--#include <unistd.h>.
+--*Some library that i have used in are not mentioned in the Guide*.
 
---*Some library that i have used in are not mentioned in the Guide*
+4.And some new Fucntion like.
+--Fprintf().
+--perror().
+--chdir().
+--exit().
+
+5.I also leanred to Allocated and write in a Df=iffrent Formats..(Interesting...).
+
+--*Some library that i have used in are not mentioned in the Guide*.
 
 
 
-plz dont judge me For Readme file -_-.
+plz dont judge me For Readme file -_- This is my First time Creating it.
 Thx For Reading ..
