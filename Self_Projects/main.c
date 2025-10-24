@@ -138,3 +138,65 @@ int lsh_launch(char **args)
     }
     return 1;
 }
+
+/*
+    Function Declaration for built-in shell commands:
+*/
+int lsh_cd(char **args);
+int lsh_help(char **args);
+int lsh_exit(char **args);
+
+/*
+    List of builtin commands,followed by their corresponding functions.
+*/
+char *builtin_str[]={ //Why Declaring this?And how wit is a valid format?
+    "cd",
+    "help",
+    "exit"
+}; //Here we Declare like this we will be able to add Future Builtin Commands easily
+
+int (*builtin_func[])(char **) ={ //What is this Syntax?+ This Function named built_func that takes an array of char pointers as argument and returns an int
+    //[function pointers are declared] Search this ... 
+    &lsh_cd,
+    &lsh_help,
+    &lsh_exit
+};
+
+int lsh_num_builtins(){
+    return sizeof(builtin_str) /sizeof(char *);
+};
+
+/*
+    Builtin function implementations.
+*/
+int lsh_cd(char **args){
+    if (args[1] == NULL){
+        fprintf(stderr,"lsh: expected argument to \"cd\"\n"); //why use \"cd\"?
+    }else{
+        if(chdir(args[1]) != 0){
+            perror("lsh"); //This function is used to print a descriptive error message to stderr
+        }
+    }
+    return 1; // we return 1 to continue executing
+}
+
+int lsh_help(char **args)
+{
+    int i;
+    printf("Momin ali shaikh \n");
+    printf("Type program names and arguments, and hit enter.\n");
+    printf("The following are built in:\n");
+
+    for (i = 0; i < lsh_num_builtins(); i++)
+    {
+        printf(" %s\n",builtin_str[i]); //Printing the built in commands
+    }
+
+    printf("Use the man command for information on other programs.\n");
+    return 1; 
+}
+
+int lsh_exit(char **args)
+{
+    return 0; //**Returning 0 will cause the loop to terminate and if i return 1 it will continue executing**
+}
