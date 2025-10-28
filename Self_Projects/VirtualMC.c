@@ -16,4 +16,19 @@ We are using LC-3b architecture as reference
 #define MEMORY_SIZE (1 << 16) //2^16 locations
 uint16_t memory[MEMORY_SIZE]; //Each location is 16 bits wide
 
+//Registers
+enum {
+    R_R0, //optional to define first item as 0
+    R_R1,
+    R_R2,
+    R_R3,
+    R_R4,
+    R_R5,
+    R_R6,
+    R_R7,
+    R_PC, //Program Counter
+    R_COND,
+    R_COUNT
+};
 
+uint16_t reg[R_COUNT]; //Each of size 16 bits
