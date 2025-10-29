@@ -126,6 +126,87 @@ int main(int argc, char *argv[]) //Taking command line argumnets
                 update_flags(r0);
             }
             break;
+       case OP_AND:
+            {
+                uint16_t r0 = (instr >> 9) & 0x7;
+                uint16_t r1 = (instr >> 6) & 0x7;
+                uint16_t imm_flag = (instr >> 5) & 0x1;
+
+                if (imm_flag)
+                {
+                    uint16_t imm5 = sign_extend(instr & 0x1f ,5);
+                    reg[r0] = reg[r1] & imm5;
+                }
+                else
+                {
+                    uint16_t r2 = instr & 0x7; //wht is the purpose?
+                    reg[r0] = reg[r1] & reg[r2];
+                }
+                update_flags(r0);
+            }
+            break;
+        case OP_NOT:
+        {
+            uint16_t r0 = (instr >> 9) & 0x7;
+            uint16_t r1 = (instr >> 6) & 0x7;
+
+            reg[r0] = ~reg[r1]; //why use ~ here?
+            update_flags(r0);
+        }
+        break;
+
+        case OP_BR:
+            {
+                uint16_t pc_offset = sign_extend(instr & 0x1FF,9);
+                uint16_t cond_flag = (instr >> 9) & 0x7;
+                if (cond_flag & reg[R_COND])
+                {
+                    reg[R_PC] += pc_offset;
+                }
+            }
+            break;
+        case OP_JMP:
+            {
+                uint16_t base_r = (instr >> 6) & 0x7; //#changed..
+                reg[R_PC] = reg[base_r];
+            }
+            break;
+        case OP_JSR:
+            {
+                uint16_t long_flag = (instr >> 11) & 1;
+                reg[R_R7] = reg[R_PC];
+                if (long_flag)
+                {
+                    uint16_t pc_offset = sign_extend(instr & 0x7FF,11);
+                    reg[R_PC] += pc_offset;
+                }
+                else
+                {
+                    uint16_t base_r = (instr >> 6) & 0x7;
+                    reg[R_PC] = reg[base_r];
+                }
+            }
+            break;
+        case OP_LD:
+            {
+                uint16_t r0 = (instr >> 9) & 0x7;
+                uint16_t pc_offset = sign_extend(instr & 0x1FF,9); //Pc offset is getting owerwritten here again and again
+                reg[r0] = mem_read(reg[R_PC] + pc_offset); //Usually this two are always together?
+                update_flags(r0);
+            }
+            break;
+        
+        case OP_LDI:
+            {
+                //Destination Register
+                uint16_t r0 = (instr >> 9) & 0x7;
+                //PC offset
+                uint16_t pc_offset = sign_extend(instr & 0x1FF,9);
+                //add pc_offset to the current PC, look at that memory location to get the final address
+                reg[r0] = mem_read(mem_read(reg[R_PC] + pc_offset));
+                update_flags(r0);
+            }
+            break;      
         default:
             break;
         }
