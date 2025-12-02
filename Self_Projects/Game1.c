@@ -1,36 +1,70 @@
 #include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
-#include<math.h>
 #include<string.h>
+#include <stdlib.h> // for rand() and srand()
+#include <time.h>   // for time()
 
-
-// 1. Parameter is 'char you[]' (a string)
-int game(char you[]) 
-{
-    // 2. DECLARATION: To store a LIST of words, use a 2D Array.
-    // [3] = 3 words total
-    // [10] = max 10 letters per word
-    char computer[3][10] = {"paper", "rock", "zissor"};
-
-    // 3. COMPARISON: Compare 'you' against each word in the list.
-    // Remember: Arrays start at index 0.
-    if (strcmp(you, computer[0]) == 0 || 
-        strcmp(you, computer[1]) == 0 || 
-        strcmp(you, computer[2]) == 0) 
-    {
-        return 1; // It matches one of them
+int game(char you[],char computer[]){
+    if(strcmp(you,computer) == 0){
+        return -1;
     }
 
-    return 0; // No match found
+    //Comparing stone
+    if(strcmp(you,"stone") == 0 && strcmp(computer,"paper") == 0 ){
+        printf("\n Computer chosed:---%s \n",computer);
+        return 0; //lose
+    }else if (strcmp(you,"stone") == 0 && strcmp(computer,"zissor") == 0){
+        printf("\n Computer chosed:---%s",computer);
+        return 1; //win
+    }
+    if(strcmp(you,"paper") == 0 && strcmp(computer,"stone") == 0){
+        printf("\n Computer chosed:---%s",computer);
+        return 1; //win
+    }else if (strcmp(you,"paper") == 0 && strcmp(computer,"zissor") == 0){
+        printf("\n Computer chosed:---%s",computer);
+        return 0; //lose
+    }
+    if(strcmp(you,"zissor") == 0 && strcmp(computer,"stone") ==0){
+        printf("\n Computer chosed:---%s",computer);
+        return 1; //win
+    }else if (strcmp(you,"zissor") == 0 && strcmp(computer,"paper") == 0){
+        printf("\n Computer chosed:---%s",computer);
+        return 0; //lose
+    }
+
 }
 
-int main() {
-    // 4. Input is a string (use double quotes "")
-    char you[] = "rock"; 
+int main(){
+    printf("\n\n\n\nHello welcome to the stone,paper,zissor gamen\n\n\n\n");
     
-    int result = game(you);
-    printf("Draw %d", result); 
-    
-    return 0;
+    //Defining the datstype
+    char you[20];
+    char computer[20];
+    int result,n;
+
+    //Random generater
+    srand(time(NULL));
+    n = rand()%100;
+
+    if(n<33)
+    {
+        strcpy(computer,"stone");
+    }else if(n > 33 && n < 66){
+        strcpy(computer,"paper");
+    }else{
+        strcpy(computer,"zissor");
+    }
+
+    //Now for user
+    printf("\nPlz enter stone,paper,zissor:");
+    scanf("%s",you);
+    result=game(you,computer);
+    if(result == -1){
+        printf("\n--Draw--\n");
+    }else if(result == 1){
+        printf("\n--You win!--\n");
+    }else if(result == 0){
+        printf("\n--You lose!--\n");
+    }else{
+        printf("\n--Error--\n");
+    }
 }
